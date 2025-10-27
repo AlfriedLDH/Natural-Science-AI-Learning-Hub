@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Natural Science AI Learning Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0"
+  }
+}
+</script>
+<style>
+  :root {
+    --bg-primary: #0D0F18;
+    --bg-secondary: #1A1D2E;
+    --accent-primary: #00F2FE;
+    --accent-secondary: #FF00E6;
+    --text-primary: #E0E0E0;
+    --text-secondary: #A0A0A0;
+    --border-color: #00F2FE40;
+    --glow-color: #00F2FE80;
+    --success-color: #00ff89;
+    --error-color: #ff4d4d;
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--glow-color), 0 0 10px var(--glow-color); }
+    50% { box-shadow: 0 0 15px var(--glow-color), 0 0 20px var(--glow-color); }
+  }
+  
+  @keyframes background-pan {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Orbitron', sans-serif;
+    background-image:
+      radial-gradient(circle at 25% 25%, var(--accent-secondary) 0%, transparent 25%),
+      radial-gradient(circle at 75% 75%, var(--accent-primary) 0%, transparent 25%);
+    background-size: 100vw 100vh;
+    background-attachment: fixed;
+  }
+
+  .main-background {
+    background-image:
+      linear-gradient(var(--border-color) 1px, transparent 1px),
+      linear-gradient(to right, var(--border-color) 1px, var(--bg-primary) 1px);
+    background-size: 40px 40px;
+    background-color: var(--bg-primary);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+  ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #00c1cf; }
+
+  /* Game UI Elements */
+  .game-button {
+    background-color: transparent;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 10px 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: all 0.2s ease;
+  }
+  .game-button:hover:not(:disabled) {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    box-shadow: 0 0 15px var(--glow-color);
+  }
+  .game-button:disabled {
+    border-color: #444;
+    color: #666;
+    cursor: not-allowed;
+  }
+  .game-button.secondary {
+    border-color: var(--accent-secondary);
+    color: var(--accent-secondary);
+  }
+  .game-button.secondary:hover:not(:disabled) {
+    background-color: var(--accent-secondary);
+    color: var(--bg-primary);
+    box-shadow: 0 0 15px var(--accent-secondary);
+  }
+
+  .game-input, .game-textarea, .game-select {
+    background-color: rgba(26, 29, 46, 0.8);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(5px);
+    color: var(--text-primary);
+    padding: 10px;
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+  .game-input:focus, .game-textarea:focus, .game-select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px var(--glow-color);
+  }
+  
+  .game-card {
+    background-color: rgba(26, 29, 46, 0.8);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    position: relative;
+  }
+  .game-card::before, .game-card::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-style: solid;
+    border-color: var(--accent-primary);
+  }
+  .game-card::before {
+    top: -2px; left: -2px;
+    border-width: 2px 0 0 2px;
+  }
+  .game-card::after {
+    bottom: -2px; right: -2px;
+    border-width: 0 2px 2px 0;
+  }
+
+  .toggle-checkbox {
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .toggle-checkbox::before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+  }
+  .toggle-checkbox:checked {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+  .toggle-checkbox:checked::before {
+    transform: translateX(20px);
+    background-color: var(--bg-primary);
+  }
+  
+  /* Auth Form Specific */
+  .auth-container {
+    background: radial-gradient(ellipse at center, rgba(13, 15, 24, 0.95) 0%, rgba(13, 15, 24, 1) 70%);
+  }
+
+  /* Leaderboard */
+  .leaderboard-table th {
+    padding: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-primary);
+    border-bottom: 1px solid var(--border-color);
+  }
+  .leaderboard-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .leaderboard-table tr:last-child td {
+    border-bottom: none;
+  }
+  .leaderboard-table tr.current-user {
+    background-color: rgba(0, 242, 254, 0.1);
+    box-shadow: 0 0 10px var(--glow-color);
+  }
+
+</style>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

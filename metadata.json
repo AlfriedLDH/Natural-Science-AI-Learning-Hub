@@ -1,0 +1,7 @@
+{
+  "name": "trung tâm khoa học tự nhiên",
+  "description": "An AI-powered web application for learning natural sciences (Math, Physics, Chemistry, Biology, Computer Science). It integrates Gemini for quick answers, complex reasoning, search-grounded information, media analysis (image and video), image generation, text-to-speech, and real-time voice conversations.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
